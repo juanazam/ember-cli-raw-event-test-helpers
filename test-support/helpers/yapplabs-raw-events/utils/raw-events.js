@@ -3,16 +3,24 @@
 import Ember from 'ember';
 
 function createTouchEvent(name, x, y /*, identifier*/) {
-  const event = new MouseEvent(name, {
-    view: window,
-    bubbles: true,
-    cancelable: true,
-    button: 0,
-    clientX: x,
-    clientY: y,
-    screenX: x,
-    screenY: y
-  });
+  let event;
+  if (typeof MouseEvent === "function") {
+    event = new MouseEvent(name, {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+      clientX: x,
+      clientY: y,
+      screenX: x,
+      screenY: y
+    });
+  } else {
+    // phantomjs fallback
+    event = document.createEvent("MouseEvents");
+
+    event.initMouseEvent(name, true, true, window, 0, x, y, x, y, false, false, false, false, 0, null);
+  }
 
   return event;
 }
